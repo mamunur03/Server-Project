@@ -30,4 +30,8 @@ const verifyToken = (requiredRole) => (req, res, next) => {
   });
 };
 
-module.exports = { generateToken, verifyToken };
+const clearCookie = (res) => {
+  res.clearCookie('token', { httpOnly: true });
+};
+
+module.exports = { generateToken, verifyToken ,clearCookie};

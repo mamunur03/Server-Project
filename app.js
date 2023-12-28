@@ -12,7 +12,7 @@ app.use(cookieParser());
 app.use(passport.initialize());
 
 const userRoutes = require('./Routes/userRoutes');
-app.use(userRoutes); // Update the base path for your API routes
+app.use(userRoutes);
 
 // Connect to DB
 const mongoose = require("mongoose");

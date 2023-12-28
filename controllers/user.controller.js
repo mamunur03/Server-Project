@@ -1,6 +1,6 @@
 const User = require('../models/user.model');
 const passport = require('passport');
-const { generateToken } = require('../middleware/auth');
+const { generateToken, clearCookie } = require('../middleware/auth');
 require('../middleware/passport')(passport);
 
 const registerUser = async (req, res) => {
@@ -49,6 +49,11 @@ const loginUser = (req, res, next) => {
   })(req, res, next);
 };
 
+const logoutUser = (req, res) => {
+  clearCookie(res); 
+  res.status(200).json({ message: 'Logout successful' });
+};
+
 const getDrivers = async (req, res) => {
   try {
     const drivers = await User.find({ role: 'driver' }, 'username role');
@@ -72,6 +77,7 @@ const getPassengers = async (req, res) => {
 module.exports = {
   registerUser,
   loginUser,
+  logoutUser,
   getDrivers,
   getPassengers,
 };
