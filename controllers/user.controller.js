@@ -2,13 +2,29 @@ const User = require('../models/user.model');
 const passport = require('passport');
 const { generateToken, clearCookie } = require('../middleware/auth');
 require('../middleware/passport')(passport);
+const bcrypt = require("bcrypt");
 
 const registerUser = async (req, res) => {
-  const { username, password, role } = req.body;
+   const { username, email, password, role } = req.body;
 
   try {
-    await User.create({ username, password, role });
-    res.status(201).json({ message: 'User registered successfully' });
+    // Check if username and email are unique
+    const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Username or email already exists.' });
+    }
+
+    // Validate password requirements (e.g., minimum length)
+    if (password.length < 8) {
+      return res.status(400).json({ message: 'Password must be at least 8 characters long.' });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create the user
+    await User.create({ username, email, password: hashedPassword, role });
+    res.redirect('/login');
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: 'An error occurred!' });
@@ -44,7 +60,12 @@ const loginUser = (req, res, next) => {
       const payload = { userId: _id, username, role };
       const token = generateToken(payload);
       res.cookie('token', token, { httpOnly: true });
-      return res.status(200).json({ message: 'Login successful' });
+      // Redirect based on the user's role
+      if (role === 'passenger') {
+        return res.redirect('/homepage');
+      } else if (role === 'driver') {
+        return res.redirect('/driverhomepage');
+      }
     });
   })(req, res, next);
 };
