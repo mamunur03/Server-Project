@@ -5,7 +5,7 @@ require('../middleware/passport')(passport);
 const bcrypt = require("bcrypt");
 
 const registerUser = async (req, res) => {
-   const { username, email, password, role } = req.body;
+  const { username, email, password, role } = req.body;
 
   try {
     // Check if username and email are unique
@@ -22,8 +22,12 @@ const registerUser = async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Set isPending based on the role
+    const isPending = role === 'driver';
+
     // Create the user
-    await User.create({ username, email, password: hashedPassword, role });
+    await User.create({ username, email, password: hashedPassword, role, isPending });
+    
     res.redirect('/login');
   } catch (error) {
     console.log(error);
@@ -31,11 +35,11 @@ const registerUser = async (req, res) => {
   }
 };
 
+
 const loginUser = (req, res, next) => {
-  passport.authenticate('local', { session: false }, (err, user, info) => {
+  passport.authenticate('local', { session: false }, async (err, user, info) => {
     if (err) {
       console.log(err);
-
       return res.status(500).json({
         message: 'An error occurred while logging in'
       });
@@ -47,33 +51,52 @@ const loginUser = (req, res, next) => {
       });
     }
 
-    req.login(user, { session: false }, (err) => {
-      if (err) {
-        console.log(err);
+    try {
+      // Check the isPending status
+      const { _id, username, role, isPending } = user;
 
-        return res.status(500).json({
-          message: 'An error occurred while logging in'
+      if (isPending) {
+        // Inform the user that their request is pending
+        return res.status(403).json({
+          message: 'Your account is pending approval. Please wait for admin verification.'
         });
       }
 
-      const { _id, username, role } = user;
-      const payload = { userId: _id, username, role };
-      const token = generateToken(payload);
-      res.cookie('token', token, { httpOnly: true });
-      // Redirect based on the user's role
-      if (role === 'passenger') {
-        return res.redirect('/homepage');
-      } else if (role === 'driver') {
-        return res.redirect('/driverhomepage');
-      }
-    });
+      req.login(user, { session: false }, (err) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({
+            message: 'An error occurred while logging in'
+          });
+        }
+
+        const payload = { userId: _id, username, role };
+        const token = generateToken(payload);
+        res.cookie('token', token, { httpOnly: true });
+        if (role === 'passenger') {
+          return res.redirect('/homepage');
+        } else if (role === 'admin') {
+          return res.redirect('/adminhomepage');
+        } else if (role === 'driver') {
+          return res.redirect('/driverhomepage');
+        }
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        message: 'An error occurred while logging in'
+      });
+    }
   })(req, res, next);
 };
+
 
 const logoutUser = (req, res) => {
   clearCookie(res); 
   res.status(200).json({ message: 'Logout successful' });
 };
+
+
 
 const getDrivers = async (req, res) => {
   try {
@@ -100,5 +123,5 @@ module.exports = {
   loginUser,
   logoutUser,
   getDrivers,
-  getPassengers,
+  getPassengers
 };

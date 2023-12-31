@@ -12,7 +12,10 @@ app.use(cookieParser());
 app.use(passport.initialize());
 
 const userRoutes = require('./Routes/userRoutes');
-app.use(userRoutes);
+app.use('/', userRoutes);
+
+const adminRoutes = require('./Routes/adminRoutes');
+app.use('/admin',adminRoutes);
 
 // Connect to DB
 const mongoose = require("mongoose");
