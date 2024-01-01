@@ -37,4 +37,11 @@ router.post('/logout', userControllers.logoutUser);
 router.get('/drivers', verifyToken('driver'), userControllers.getPassengers);
 router.get('/passengers', verifyToken('passenger'), userControllers.getDrivers);
 
+router.get("/auth/google", userControllers.getScope);
+
+
+router.get("/google/callback",userControllers.getCallback);
+router.get("/google/failure", userControllers.getFailure);
+router.get('/google-signup', userControllers.initiateGoogleOAuth);
+
 module.exports = router;

@@ -124,10 +124,59 @@ const getPassengers = async (req, res) => {
   }
 };
 
+const getScope = (req, res) => {
+  passport.authenticate('google', {
+    scope: ['email', 'profile'],
+  })(req, res); // Invoke passport.authenticate within the route handler
+};
+
+const getCallback = (req, res, next) => {
+  passport.authenticate('google',{ session: false }, (err, user, info) => {
+    if (err) {
+      console.error('Authentication error:', err);
+      return res.status(500).json({ error: 'Authentication error' });
+    }
+
+    if (!user) {
+      console.error('Authentication failed:', info.message);
+      return res.status(401).json({ error: info.message });
+    }
+
+    req.login(user,{ session: false } ,(err) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Session is not set' });
+      } else {
+        // Generate JWT token using the function
+        const payload = { userId: user._id, username: user.username, role: user.role };
+        const token = generateToken(payload);
+
+        // Set the token as an HTTP-only cookie
+        res.cookie('token', token, { httpOnly: true });
+
+        return res.status(200).json({ message: 'Logged In', user });
+      }
+    });
+  })(req, res, next);
+};
+
+const getFailure = (req, res) => {
+  res.send('USER NOT FOUND!!! >');
+};
+
+const initiateGoogleOAuth = (req, res) => {
+  // You can customize the URL to match your actual route for Google OAuth
+  res.redirect('/auth/google');
+};
+
 module.exports = {
   registerUser,
   loginUser,
   logoutUser,
   getDrivers,
-  getPassengers
+  getPassengers,
+  getScope,
+  getFailure,
+  getCallback,
+  initiateGoogleOAuth,
 };
