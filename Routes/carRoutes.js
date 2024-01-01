@@ -24,6 +24,9 @@ router.delete('/delete-car/:carId', verifyToken('admin'), carControllers.deleteC
 router.put('/update-car/:carId', verifyToken('admin'), carControllers.updateCarFields);
 
 // Get specific car by ID
-router.get('/get-car/:carId', verifyToken('admin'), carControllers.getCarById);
+router.get('/get-car/:carId', verifyToken(['admin', 'passenger']), carControllers.getCarById);
+
+router.get('/available-cars', verifyToken(['admin', 'passenger']), carControllers.getAvailableCars);
+
 
 module.exports = router;

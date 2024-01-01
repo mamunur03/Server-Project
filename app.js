@@ -29,6 +29,9 @@ app.use('/driver', driverRoutes);
 const carRoutes = require('./Routes/carRoutes');
 app.use('/car', carRoutes);
 
+const rentRoutes = require('./Routes/rentRoutes');
+app.use('/rent', rentRoutes);
+
 // Connect to DB
 const mongoose = require("mongoose");
 mongoose

@@ -183,6 +183,17 @@ const getCarById = async (req, res) => {
   }
 };
 
+const getAvailableCars = async (req, res) => {
+  try {
+    const availableCars = await Car.find({ available: true });
+    res.status(200).json({ availableCars });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred while fetching available cars' });
+  }
+};
+
+
 module.exports = {
   postCar,
   updateCarImage,
@@ -191,5 +202,6 @@ module.exports = {
     getAllCars,
     deleteCar,
   updateCarFields,
-  getCarById,
+    getCarById,
+  getAvailableCars,
 };
