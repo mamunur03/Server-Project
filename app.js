@@ -3,6 +3,7 @@ const app = express();
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
+const path = require('path');
 require('./middleware/passport')(passport);
 
 app.use(express.json());
@@ -10,6 +11,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(cookieParser());
 app.use(passport.initialize());
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const userRoutes = require('./Routes/userRoutes');
 app.use('/', userRoutes);
@@ -20,6 +23,8 @@ app.use('/admin', adminRoutes);
 const passengerRoutes = require('./Routes/passengerRoutes');
 app.use('/passenger', passengerRoutes);
 
+const driverRoutes = require('./Routes/driverRoutes');
+app.use('/driver', driverRoutes);
 
 // Connect to DB
 const mongoose = require("mongoose");

@@ -14,7 +14,7 @@ const DriverSchema = new mongoose.Schema({
     profile_pic: { type: String,default:null },
     trip_count: { type: Number, default: 0 },
     rating: { type: Number, default: 0 },
-    isAvailable: { type: Boolean, default: true },
+    isAvailable: { type: Boolean, default: false },
 });
 
 const Driver = mongoose.model('Driver', DriverSchema);

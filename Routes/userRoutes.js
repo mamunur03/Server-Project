@@ -24,7 +24,7 @@ router.get('/homepage', (req, res) => {
 });
 
 router.get('/driverhomepage', (req, res) => {
-  res.sendFile(path.join(__dirname, '../views/homepage.html'));
+  res.sendFile(path.join(__dirname, '../views/driverhomepage.html'));
 });
 
 router.get('/adminhomepage', (req, res) => {
