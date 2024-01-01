@@ -1,4 +1,5 @@
 const User = require('../models/user.model');
+const Passenger = require('../models/passenger_profile.model');
 const passport = require('passport');
 const { generateToken, clearCookie } = require('../middleware/auth');
 require('../middleware/passport')(passport);
@@ -26,8 +27,13 @@ const registerUser = async (req, res) => {
     const isPending = role === 'driver';
 
     // Create the user
-    await User.create({ username, email, password: hashedPassword, role, isPending });
-    
+    const user = await User.create({ username, email, password: hashedPassword, role, isPending });
+
+    // If the role is 'passenger', create a Passenger record
+    if (role === 'passenger') {
+      await Passenger.create({ user: user._id });
+    }
+
     res.redirect('/login');
   } catch (error) {
     console.log(error);

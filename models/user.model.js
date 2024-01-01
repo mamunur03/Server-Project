@@ -5,7 +5,7 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, unique: true, required: true },
   password: { type: String, required: true },
   role: { type: String, enum: ['driver', 'passenger', 'admin'], required: true },
-  isPending: { type: Boolean, default: false } // Added field for pending status
+  isPending: { type: Boolean, default: false } 
 });
 
 const User = mongoose.model("User", UserSchema);

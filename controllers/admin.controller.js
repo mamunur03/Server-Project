@@ -1,4 +1,5 @@
 const User = require('../models/user.model');
+const Driver = require('../models/driver_profile.model');
 
 const getPendingRequests = async (req, res) => {
   try {
@@ -22,12 +23,18 @@ const approvePendingRequest = async (req, res) => {
     user.isPending = false;
     await user.save();
 
+    // If the user's role is 'driver', create a DriverProfile
+    if (user.role === 'driver') {
+      await Driver.create({ user: user._id });
+    }
+
     res.status(200).json({ message: 'Pending request approved successfully' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'An error occurred while approving the pending request' });
   }
 };
+
 
 const deletePendingRequest = async (req, res) => {
   const userId = req.params.userId;

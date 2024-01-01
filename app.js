@@ -15,7 +15,11 @@ const userRoutes = require('./Routes/userRoutes');
 app.use('/', userRoutes);
 
 const adminRoutes = require('./Routes/adminRoutes');
-app.use('/admin',adminRoutes);
+app.use('/admin', adminRoutes);
+
+const passengerRoutes = require('./Routes/passengerRoutes');
+app.use('/passenger', passengerRoutes);
+
 
 // Connect to DB
 const mongoose = require("mongoose");
