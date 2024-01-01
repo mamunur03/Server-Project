@@ -20,7 +20,7 @@ const verifyToken = (requiredRole) => (req, res, next) => {
 
     req.userId = decoded.userId;
 
-    if (decoded.role && decoded.role === requiredRole) {
+    if (decoded.role && requiredRole.includes(decoded.role)) {
       next();
     } else {
       return res.status(403).json({

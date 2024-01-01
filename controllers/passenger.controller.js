@@ -1,6 +1,4 @@
-const User = require('../models/user.model');
 const Passenger = require('../models/passenger_profile.model');
-
 
 const updatePassengerProfile = async (req, res) => {
   const userId = req.userId; // From the token payload
@@ -81,8 +79,36 @@ const updatePassengerProfilePic = async (req, res) => {
   }
 };
 
+const getAllPassengers = async (req, res) => {
+  try {
+    const passengers = await Passenger.find();
+    res.status(200).json({ passengers });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred while fetching all passengers' });
+  }
+};
+
+const getSpecificPassengerProfile = async (req, res) => {
+  const { passengerId } = req.params;
+
+  try {
+    const passenger = await Passenger.findById(passengerId);
+    if (!passenger) {
+      return res.status(404).json({ message: 'Passenger profile not found' });
+    }
+
+    res.status(200).json({ passenger });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred while fetching the specific passenger profile' });
+  }
+};
+
 module.exports = {
     updatePassengerProfile,
     getPassengerProfile,
-    updatePassengerProfilePic,
+  updatePassengerProfilePic,
+  getAllPassengers,
+  getSpecificPassengerProfile
 };

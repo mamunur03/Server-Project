@@ -1,4 +1,3 @@
-const User = require('../models/user.model');
 const Driver = require('../models/driver_profile.model');
 
 const updateDriverProfile = async (req, res) => {
@@ -99,10 +98,58 @@ const setDriverAvailability = async (req, res) => {
     res.status(500).json({ message: 'An error occurred while updating driver availability' });
   }
 };
+const getAllDrivers = async (req, res) => {
+  try {
+    const allDrivers = await Driver.find();
+    res.status(200).json(allDrivers);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred while fetching all drivers' });
+  }
+};
+
+const getAvailableDrivers = async (req, res) => {
+  try {
+    const availableDrivers = await Driver.find({ isAvailable: true },);
+    res.status  (200).json(availableDrivers);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred while fetching available drivers' });
+  }
+};
+
+const getUnavailableDrivers = async (req, res) => {
+  try {
+    const unavailableDrivers = await Driver.find({ isAvailable: false },);
+    res.status(200).json(unavailableDrivers);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred while fetching unavailable drivers' });
+  }
+};
+
+const searchDriver = async (req, res) => {
+  const { driverId } = req.params;
+
+  try {
+    const driver = await Driver.findById(driverId);
+    if (!driver) {
+      return res.status(404).json({ message: 'Driver not found' });
+    }
+    res.status(200).json({ driver });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred while searching for the driver' });
+  }
+};
 
 module.exports = {
+  getAllDrivers,
+  getAvailableDrivers,
+  getUnavailableDrivers,
   updateDriverProfile,
   getDriverProfile,
   updateDriverProfilePic,
-  setDriverAvailability
+  setDriverAvailability,
+  searchDriver
 };
