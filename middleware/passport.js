@@ -48,7 +48,7 @@ module.exports = (passport) => {
             role: 'passenger',
           });
 
-          await Passenger.create({ newUser: user._id });
+          await Passenger.create({ user: newUser._id });
 
           return done(null, newUser);
         } catch (error) {

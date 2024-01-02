@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const driverControllers = require('../controllers/driver.controller');
 const { verifyToken } = require('../middleware/auth');
-const upload = require('../middleware/multer');
+
+const {uploadImage, uploadVideo } = require('../middleware/multer');
 
 router.get('/all-drivers', verifyToken('admin'), driverControllers.getAllDrivers);
 
@@ -16,7 +17,7 @@ router.put('/update-profile', verifyToken('driver'), driverControllers.updateDri
 
 router.get('/profile', verifyToken('driver'), driverControllers.getDriverProfile);
 
-router.post('/update-profile-pic', verifyToken('driver'), upload.single('profile_pic'), driverControllers.updateDriverProfilePic);
+router.post('/update-profile-pic', verifyToken('driver'), uploadImage.single('profile_pic'), driverControllers.updateDriverProfilePic);
 
 router.put('/set-availability', verifyToken('driver'), driverControllers.setDriverAvailability);
 

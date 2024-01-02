@@ -13,12 +13,10 @@ const DriverSchema = new mongoose.Schema({
   address: { type: String, default: null },
   profile_pic: { type: String, default: null },
   trip_count: { type: Number, default: 0 },
-  isAvailable: { type: Boolean, default: false },
+  isAvailable: { type: Boolean, default: true },
   reviews: [
     {
-      userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-      comment: { type: String },
-      rating: { type: Number },
+      type: String,
     },
   ],
 });

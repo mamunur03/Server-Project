@@ -40,7 +40,7 @@ const deletePendingRequest = async (req, res) => {
 
   try {
     const removedUser = await User.findByIdAndRemove(userId);
-    res.status(200).json(removedUser);
+    res.status(200).json("User deleted successfully");
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'An error occurred while deleting the request' });

@@ -2,13 +2,14 @@ const express = require('express');
 const router = express.Router();
 const carControllers = require('../controllers/car.controller');
 const { verifyToken } = require('../middleware/auth');
-const upload = require('../middleware/multer');
+
+const {uploadImage, uploadVideo } = require('../middleware/multer');
 
 router.post('/post-car', verifyToken('admin'), carControllers.postCar);
 
-router.post('/update-car-image/:carId', verifyToken('admin'), upload.single('image'), carControllers.updateCarImage);
+router.post('/update-car-image/:carId', verifyToken('admin'), uploadImage.single('image'), carControllers.updateCarImage);
 
-router.post('/update-car-video/:carId', verifyToken('admin'), upload.single('video'), carControllers.updateCarVideo);
+router.post('/update-car-video/:carId', verifyToken('admin'), uploadVideo.single('video'), carControllers.updateCarVideo);
 
 router.put('/set-car-availability/:carId', verifyToken('admin'), carControllers.setCarAvailability);
 

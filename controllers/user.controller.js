@@ -92,7 +92,7 @@ const loginUser = (req, res, next) => {
 
 const logoutUser = (req, res) => {
   clearCookie(res); 
-  res.status(200).json({ message: 'Logout successful' });
+  res.redirect('/login');
 };
 
 

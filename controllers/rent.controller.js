@@ -2,7 +2,6 @@ const Rent = require('../models/rent.model');
 const Driver = require('../models/driver_profile.model');
 const Car = require('../models/car.model');
 
-// Create a rent request
 const createRentRequest = async (req, res) => {
   const { carId, driverId, pickupLocation, durationHours } = req.body;
 
@@ -24,7 +23,6 @@ const createRentRequest = async (req, res) => {
   }
 };
 
-// Update a rent request
 const updateRentRequest = async (req, res) => {
   const rentId = req.params.rentId;
   const { pickupLocation, startDate, durationHours } = req.body;
@@ -36,7 +34,6 @@ const updateRentRequest = async (req, res) => {
       return res.status(404).json({ message: 'Rent request not found' });
     }
 
-    // Update fields if provided
     if (pickupLocation !== undefined) {
       rentRequest.pickupLocation = pickupLocation;
     }
@@ -58,7 +55,6 @@ const updateRentRequest = async (req, res) => {
   }
 };
 
-// Delete a rent request
 const deleteRentRequest = async (req, res) => {
   const rentId = req.params.rentId;
 
@@ -78,7 +74,6 @@ const deleteRentRequest = async (req, res) => {
   }
 };
 
-// Get the status of a rent request
 const getRentStatus = async (req, res) => {
   const rentId = req.params.rentId;
 
@@ -106,17 +101,14 @@ const approveRentRequest = async (req, res) => {
       return res.status(404).json({ message: 'Rent request not found' });
     }
 
-    // Update the rent request status to 'ongoing'
     rentRequest.status = 'ongoing';
     await rentRequest.save();
 
-    // Update the car and driver availability to false
     rentRequest.car.available = false;
     rentRequest.driver.isAvailable = false;
 
     await Promise.all([rentRequest.car.save(), rentRequest.driver.save()]);
 
-    // Reject other pending rent requests for the same car
     await Rent.updateMany(
       { car: rentRequest.car, status: 'pending', _id: { $ne: rentId } },
       { status: 'rejected' }
@@ -131,7 +123,6 @@ const approveRentRequest = async (req, res) => {
 
 
 
-// Admin declines a rent request
 const declineRentRequest = async (req, res) => {
   const rentId = req.params.rentId;
 
@@ -152,7 +143,6 @@ const declineRentRequest = async (req, res) => {
   }
 };
 
-// Get pending rent requests
 const getPendingRentRequests = async (req, res) => {
   try {
     const pendingRentRequests = await Rent.find({ status: 'pending' });
@@ -174,31 +164,23 @@ const completeTrip = async (req, res) => {
       return res.status(404).json({ message: 'Rent request not found' });
     }
 
-    // Ensure that the trip status is not already completed
     if (rentRequest.status === 'completed') {
       return res.status(400).json({ message: 'Trip is already marked as completed' });
     }
 
-    // Update the rent request with the completed status and rating
     rentRequest.status = 'completed';
 
-    // Add the new review to the array of reviews in the Driver model
     rentRequest.driver.reviews.push(review);
 
-    await Promise.all([rentRequest.save(), rentRequest.driver.save(), rentRequest.car.save()]);
-
-    // Update the driver's overall rating based on the new review
     const newRating =
       (rentRequest.driver.rating * rentRequest.driver.trip_count + rating) /
       (rentRequest.driver.trip_count + 1);
     rentRequest.driver.rating = newRating;
     rentRequest.driver.trip_count += 1;
-    await rentRequest.driver.save();
 
-    // Set both the driver and car as available
     rentRequest.driver.isAvailable = true;
     rentRequest.car.available = true;
-    await Promise.all([rentRequest.driver.save(), rentRequest.car.save()]);
+   await Promise.all([rentRequest.save(), rentRequest.driver.save(), rentRequest.car.save()]);
 
     res.status(200).json({ message: 'Trip completed successfully', rentRequest });
   } catch (error) {

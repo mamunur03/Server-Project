@@ -1,7 +1,7 @@
 const Driver = require('../models/driver_profile.model');
 
 const updateDriverProfile = async (req, res) => {
-  const userId = req.userId; // From the token payload
+  const userId = req.userId;
   const { firstName, lastName, licenseNumber, contactNumber, address } = req.body;
 
   try {
