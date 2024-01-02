@@ -55,7 +55,7 @@ const getDriverProfile = async (req, res) => {
 };
 
 const updateDriverProfilePic = async (req, res) => {
-  const userId = req.userId; // From the token payload
+  const userId = req.userId; 
 
   try {
     const driver = await Driver.findOne({ user: userId });
@@ -63,12 +63,10 @@ const updateDriverProfilePic = async (req, res) => {
       return res.status(404).json({ message: 'Driver profile not found' });
     }
 
-    // Check if a file was provided
     if (!req.file) {
       return res.status(400).json({ message: 'No file provided' });
     }
 
-    // Save the new file information to the driver profile
     driver.profile_pic = req.file.filename;
     await driver.save();
 

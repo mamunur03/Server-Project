@@ -23,7 +23,6 @@ const approvePendingRequest = async (req, res) => {
     user.isPending = false;
     await user.save();
 
-    // If the user's role is 'driver', create a DriverProfile
     if (user.role === 'driver') {
       await Driver.create({ user: user._id });
     }
@@ -40,7 +39,6 @@ const deletePendingRequest = async (req, res) => {
   const userId = req.params.userId;
 
   try {
-    // Find the user by ID and remove
     const removedUser = await User.findByIdAndRemove(userId);
     res.status(200).json(removedUser);
   } catch (error) {

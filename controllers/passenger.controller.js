@@ -55,7 +55,7 @@ const getPassengerProfile = async (req, res) => {
 };
 
 const updatePassengerProfilePic = async (req, res) => {
-  const userId = req.userId; // From the token payload
+  const userId = req.userId; 
 
   try {
     const passenger = await Passenger.findOne({ user: userId });
@@ -63,12 +63,10 @@ const updatePassengerProfilePic = async (req, res) => {
       return res.status(404).json({ message: 'Passenger profile not found' });
     }
 
-    // Check if a file was provided
     if (!req.file) {
       return res.status(400).json({ message: 'No file provided' });
     }
 
-    // Save the new file information to the passenger profile
     passenger.profile_pic = req.file.filename;
     await passenger.save();
 

@@ -207,6 +207,39 @@ const completeTrip = async (req, res) => {
   }
 };
 
+const getPassengerOngoingTrips = async (req, res) => {
+  const passengerId = req.userId;
+
+  try {
+    const ongoingTrips = await Rent.find({
+      user: passengerId,
+      status: 'ongoing',
+    }).populate('driver car');
+
+    res.status(200).json({ ongoingTrips });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred while fetching ongoing trips for the passenger' });
+  }
+};
+
+const getPassengerCompletedTrips = async (req, res) => {
+  const passengerId = req.userId;
+
+  try {
+    const completedTrips = await Rent.find({
+      user: passengerId,
+      status: 'completed',
+    }).populate('driver car');
+
+    res.status(200).json({ completedTrips });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred while fetching completed trips for the passenger' });
+  }
+};
+
+
 
 
 module.exports = {
@@ -217,5 +250,7 @@ module.exports = {
   approveRentRequest,
     declineRentRequest,
     getPendingRentRequests,
-    completeTrip,
+  completeTrip,
+  getPassengerOngoingTrips,
+  getPassengerCompletedTrips
 };

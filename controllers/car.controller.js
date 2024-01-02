@@ -4,13 +4,11 @@ const postCar = async (req, res) => {
   const { brand, model, year, rentalPrice, vehicleNumber, image, video } = req.body;
 
   try {
-    // Check if the vehicleNumber is unique
     const existingCar = await Car.findOne({ vehicleNumber });
     if (existingCar) {
       return res.status(400).json({ message: 'Car with the provided vehicle number already exists' });
     }
 
-    // Create a new car
     const newCar = new Car({
       brand,
       model,
@@ -37,12 +35,10 @@ const updateCarImage = async (req, res) => {
       return res.status(404).json({ message: 'Car not found' });
     }
 
-    // Check if a file was provided
     if (!req.file) {
       return res.status(400).json({ message: 'No file provided' });
     }
 
-    // Save the new file information to the car
     car.image = req.file.filename;
     await car.save();
 
@@ -62,12 +58,10 @@ const updateCarVideo = async (req, res) => {
       return res.status(404).json({ message: 'Car not found' });
     }
 
-    // Check if a file was provided
     if (!req.file) {
       return res.status(400).json({ message: 'No file provided' });
     }
 
-    // Save the new file information to the car
     car.video = req.file.filename;
     await car.save();
 
@@ -88,7 +82,6 @@ const setCarAvailability = async (req, res) => {
       return res.status(404).json({ message: 'Car not found' });
     }
 
-    // Set availability based on the request body
     car.available = available;
     await car.save();
 
@@ -119,7 +112,7 @@ const deleteCar = async (req, res) => {
       return res.status(404).json({ message: 'Car not found' });
     }
 
-    await car.deleteOne(); // Use deleteOne or deleteMany based on your requirement
+    await car.deleteOne(); 
 
     res.status(200).json({ message: 'Car deleted successfully' });
   } catch (error) {

@@ -26,7 +26,7 @@ const RentSchema = new mongoose.Schema({
   },
   cost: {
     type: Number,
-    default: 0, // Default cost is set to 0, and will be calculated before saving
+    default: 0, 
   },
   status: {
     type: String,
@@ -35,17 +35,14 @@ const RentSchema = new mongoose.Schema({
   },
 });
 
-// Pre-save hook to calculate the cost before saving
 RentSchema.pre('save', async function (next) {
   try {
-    // Fetch the associated car to get the rentalPrice
     const car = await mongoose.model('Car').findById(this.car);
     
     if (!car) {
       throw new Error('Associated car not found');
     }
 
-    // Calculate the cost based on duration and car rental price
     this.cost = this.durationHours * car.rentalPrice;
 
     next();

@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const userControllers = require('../controllers/user.controller');
-const { verifyToken } = require('../middleware/auth');
 const path = require('path');
 const passport = require('passport'); 
 
@@ -34,22 +33,24 @@ router.get('/adminhomepage', (req, res) => {
 router.post('/register', userControllers.registerUser);
 router.post('/login', userControllers.loginUser);
 router.post('/logout', userControllers.logoutUser);
-router.get('/drivers', verifyToken('driver'), userControllers.getPassengers);
-router.get('/passengers', verifyToken('passenger'), userControllers.getDrivers);
+
 
 router.get("/auth/google", userControllers.getScope);
-
-
-router.get("/google/callback",userControllers.getCallback);
+router.get("/google/callback", userControllers.getCallback);
 router.get("/google/failure", userControllers.getFailure);
 router.get('/google-signup', userControllers.initiateGoogleOAuth);
+
 
 router.post('/reset-password', userControllers.updatePassword);
 router.get('/reset-password', (req, res) => {
   res.sendFile(path.join(__dirname, '../views/reset-password.html'));
 });
+
+
 router.post('/forgot-password', userControllers.sendEmail);
 router.get('/forgot-password', (req, res) => {
   res.sendFile(path.join(__dirname, '../views/forgot-password.html'));
 });
+
+
 module.exports = router;

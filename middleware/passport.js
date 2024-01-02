@@ -1,10 +1,10 @@
 const LocalStrategy = require('passport-local').Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/user.model');
+const Passenger = require('../models/passenger_profile.model');
 const bcrypt = require('bcrypt');
 
 module.exports = (passport) => {
-  // Local Strategy
   passport.use(
     new LocalStrategy(async (username, password, done) => {
       try {
@@ -27,13 +27,12 @@ module.exports = (passport) => {
     })
   );
 
-  // Google OAuth Strategy
   passport.use(
     new GoogleStrategy(
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: 'http://localhost:8080/google/callback', // Update with your callback URL
+        callbackURL: 'http://localhost:8080/google/callback', 
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
@@ -48,6 +47,8 @@ module.exports = (passport) => {
             email: profile.emails[0].value,
             role: 'passenger',
           });
+
+          await Passenger.create({ newUser: user._id });
 
           return done(null, newUser);
         } catch (error) {
