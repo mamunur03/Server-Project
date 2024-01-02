@@ -37,7 +37,6 @@ module.exports = (passport) => {
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
-          console.log(profile);
           const existingUser = await User.findOne({ email: profile.emails[0].value });
 
           if (existingUser) {

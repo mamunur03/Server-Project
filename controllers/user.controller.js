@@ -154,7 +154,7 @@ const getCallback = (req, res, next) => {
         // Set the token as an HTTP-only cookie
         res.cookie('token', token, { httpOnly: true });
 
-        return res.status(200).json({ message: 'Logged In', user });
+        return res.redirect('/homepage');
       }
     });
   })(req, res, next);
