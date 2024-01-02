@@ -4,6 +4,7 @@ const passport = require('passport');
 const { generateToken, clearCookie } = require('../middleware/auth');
 require('../middleware/passport')(passport);
 const bcrypt = require("bcrypt");
+const sendPasswordResetEmail = require("../config/nodemailer.js");
 
 const registerUser = async (req, res) => {
   const { username, email, password, role } = req.body;
@@ -165,9 +166,72 @@ const getFailure = (req, res) => {
 };
 
 const initiateGoogleOAuth = (req, res) => {
-  // You can customize the URL to match your actual route for Google OAuth
   res.redirect('/auth/google');
 };
+
+const sendEmail = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const existingUser = await User.findOne({ email });
+
+    if (!existingUser) {
+      return res.status(404).json({ error: 'User not found with the provided email.' });
+    }
+
+    // Generate JWT token
+    const payload = { userId: existingUser._id, email: existingUser.email };
+    const token = generateToken(payload).substring(0, 8);
+
+    existingUser.token = token;
+
+    await existingUser.save();
+    await sendPasswordResetEmail(email,token);
+    res.redirect('/reset-password');
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while processing the request.' });
+  }
+};
+
+const updatePassword = async (req, res) => {
+  const { token,newPassword} = req.body;
+
+  console.log(token);
+  console.log(newPassword);
+
+  try {
+    
+    // Find the user by the token
+    const existingUser = await User.findOne({ token: token});
+
+    if (!existingUser) {
+      return res.status(404).json({ error: 'User not found with the provided token.' });
+    }
+
+    // Ensure the new password is hashed before storing it
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the user's password
+    existingUser.password = hashedNewPassword;
+
+    // Clear the token after the password is updated
+    existingUser.token = null;
+
+    await existingUser.save();
+
+    // Redirect to a login page or some confirmation page
+    res.redirect('/login');
+  } catch (error) {
+    console.error(error);
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ error: 'Token has expired.' });
+    }
+    return res.status(500).json({ error: 'An error occurred while processing the request.' });
+  }
+};
+
+
 
 module.exports = {
   registerUser,
@@ -179,4 +243,6 @@ module.exports = {
   getFailure,
   getCallback,
   initiateGoogleOAuth,
+  sendEmail,
+  updatePassword,
 };

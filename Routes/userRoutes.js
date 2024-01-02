@@ -44,4 +44,12 @@ router.get("/google/callback",userControllers.getCallback);
 router.get("/google/failure", userControllers.getFailure);
 router.get('/google-signup', userControllers.initiateGoogleOAuth);
 
+router.post('/reset-password', userControllers.updatePassword);
+router.get('/reset-password', (req, res) => {
+  res.sendFile(path.join(__dirname, '../views/reset-password.html'));
+});
+router.post('/forgot-password', userControllers.sendEmail);
+router.get('/forgot-password', (req, res) => {
+  res.sendFile(path.join(__dirname, '../views/forgot-password.html'));
+});
 module.exports = router;
