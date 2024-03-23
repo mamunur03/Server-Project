@@ -27,7 +27,7 @@ Wheels on the Go is an online platform where users can request for rides of thei
 
 ### Step 1: Clone project
 
-[git clone https://github.com/mamunur03/Server-Project.git)
+[git clone https://github.com/mamunur03/WheelsOnTheGo.git]
 
 ## Step 2: Open it in VSCode / any other Editor
 
