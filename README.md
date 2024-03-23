@@ -35,6 +35,6 @@ Wheels on the Go is an online platform where users can request for rides of thei
 
 npm install
 
-## :globe_with_meridians: Step 4: Run InternConnect in your local
+## :globe_with_meridians: Step 4: Run WheelsOnTheGo in your local
 
 Server-Project/npm start
